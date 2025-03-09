@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
 )
 
 type Transaction struct {
@@ -17,13 +15,15 @@ type Transaction struct {
 
 type User struct {
 	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
-	Username  string    `gorm:"size:100;unique;not null" json:"name"`
-	Email     string    `gorm:"size:100;unique;not null" json:"email"`
+	Username  string    `gorm:"size:100;unique;not null" json:"username"`
+	Email     string    `gorm:"size:100;unique;not null" json:"user_email"`
 	Password  string    `gorm:"not null" json:"-"`
-	CreatedAt time.Time `gorm:"type:datetime;not null" json:"date"`
+	CreatedAt time.Time `gorm:"type:datetime;not null" json:"date_created"`
+	IsAdmin   bool      `gorm:"default:false;not null" json:"is_admin"`
 }
 
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
+// Login request struct
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

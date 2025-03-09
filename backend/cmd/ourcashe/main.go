@@ -5,6 +5,7 @@ import (
 	"finance-api/internal/config"
 	"finance-api/internal/database"
 	"finance-api/internal/handlers"
+	"finance-api/internal/middleware"
 	"log/slog"
 	"os"
 
@@ -30,15 +31,17 @@ func main() {
 	database.InitDb(cfg.User, cfg.Password, cfg.Host, cfg.Name, cfg.Port)
 
 	app := fiber.New()
-	//
+	// JWT Middleware
 	apiV1 := app.Group("/api/v1")
 	apiV1Transaction := apiV1.Group("/transaction")
-	apiV1Transaction.Get("/get", handlers.HandlerGetTransactions)
-	apiV1Transaction.Post("/add", handlers.HandlerAddTransaction)
-	apiV1Transaction.Delete("/delete/:id", handlers.HandlerDeleteTransaction)
+	apiV1Transaction.Get("/get", middleware.JWTProtected(), handlers.HandlerGetTransactions)
+	apiV1Transaction.Post("/add", middleware.JWTProtected(), handlers.HandlerAddTransaction)
+	apiV1Transaction.Delete("/delete/:id", middleware.JWTProtected(), handlers.HandlerDeleteTransaction)
 	apiV1Auth := apiV1.Group("/auth")
 	apiV1Auth.Post("/signup", handlers.HandlerSignup)
-	//apiV1Auth.Post("/login", handlers.HandlerLogin)
+	apiV1Auth.Post("/signin", handlers.HandlerSignin)
+	apiV1Auth.Post("/logout", middleware.JWTProtected(), handlers.HandlerLogout)
+	apiV1Auth.Get("/user", middleware.JWTProtected(), handlers.HandlerUser)
 
 	app.Listen(":8080")
 }

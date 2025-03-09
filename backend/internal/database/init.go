@@ -32,7 +32,7 @@ func InitDb(dbuser, dbpasswordv, dbhost, dbname, dbport string) {
 	// Set global connection
 	InitDbConnection(db)
 
-	AutoMigrateModels(db, &model.Transaction{})
+	AutoMigrateModels(db, &model.Transaction{}, &model.User{})
 
 	fmt.Println("Database connected and migrated successfully!")
 }

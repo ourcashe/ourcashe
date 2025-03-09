@@ -65,3 +65,47 @@ func DeleteRecordByID(model interface{}, id interface{}) error {
 	fmt.Println("Record deleted successfully")
 	return nil
 }
+
+func CreateUser(record interface{}) error {
+	if DbConnection == nil {
+		return fmt.Errorf("database connection is not initialized")
+	}
+
+	result := DbConnection.Create(record)
+	fmt.Println(result)
+	if result.Error != nil {
+		fmt.Println("something went wrong in db query")
+		// handle error here
+		return result.Error
+	}
+	fmt.Println("user created successfully successfully ", result.RowsAffected)
+	return nil
+}
+
+func GetUserByEmail(record interface{}, email string) error {
+	if DbConnection == nil {
+		return fmt.Errorf("database connection is not initialized")
+	}
+	result := DbConnection.Where("email = ?", email).First(&record)
+
+	if result.Error != nil {
+		fmt.Println("something went wrong in db query")
+		// handle error here
+		return result.Error
+	}
+	return nil
+}
+
+func GetUserById(record interface{}, id string) error {
+	if DbConnection == nil {
+		return fmt.Errorf("database connection is not initialized")
+	}
+	result := DbConnection.Where("id = ?", id).First(&record)
+
+	if result.Error != nil {
+		fmt.Println("something went wrong in db query")
+		// handle error here
+		return result.Error
+	}
+	return nil
+}
